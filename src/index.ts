@@ -11,8 +11,15 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import update_users from './db/queries/users/update_users';
+
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
+		const { pathname } = new URL(request.url);
+		if (pathname === '/api/user') {
+			const res = await update_users.updateProfile(env, ['1234', 'hello new 2']);
+			console.log(res);
+		}
 		return new Response('Hello World!');
 	},
 } satisfies ExportedHandler<Env>;
