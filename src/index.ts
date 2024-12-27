@@ -12,14 +12,28 @@
  */
 
 import update_users from './db/queries/users/update_users';
+import { getJwtToken, validateToken } from './middleware/auth';
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
+		let payload: FirebasePayload | undefined = undefined;
 		const { pathname } = new URL(request.url);
-		if (pathname === '/api/user') {
-			const res = await update_users.updateProfile(env, ['1234', 'hello new 2']);
-			console.log(res);
+		const token = getJwtToken(request);
+		if (token) {
+			try {
+				payload = await validateToken(token);
+			} catch {
+				return new Response('Unauthorized');
+			}
 		}
-		return new Response('Hello World!');
+		if (pathname === '/api/user' && payload) {
+			const input = (await request.json()) as Record<string, string>;
+			const aboutUser: string | undefined = input['about'];
+			if (aboutUser) {
+				await update_users.updateProfile(env, [payload?.user_id, aboutUser]);
+				return new Response(`About updated to ${aboutUser} for userId ${payload?.user_id}`);
+			}
+		}
+		return new Response('Not logged in');
 	},
 } satisfies ExportedHandler<Env>;
