@@ -39,6 +39,9 @@ const getPublicKey = async (): Promise<Map<string, JsonWebKey>> => {
 	// Log cache status
 	// const cacheStatus = response.headers.get('cf-cache-status');
 	// console.log(`Cache status: ${cacheStatus}`);
+	if (!response.ok) {
+		throw new Error(`Failed to fetch public keys: ${response.status} ${response.statusText}`);
+	}
 	const res: { keys: FirebaseJsonWebKey[] } = (await response.json()) as { keys: FirebaseJsonWebKey[] };
 	const resultMap = new Map<string, JsonWebKey>();
 	res.keys.forEach((key) => {
