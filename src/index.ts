@@ -14,9 +14,22 @@
 import fetch_users from './db/queries/users/fetch_users';
 import update_users from './db/queries/users/update_users';
 import { getJwtToken, validateToken } from './middleware/auth';
+import { handleCors } from './middleware/cors';
 
+const decorateResponse = (request: Request, response: any, status: number) => {
+	return handleCors(
+		request,
+		new Response(JSON.stringify(response), {
+			headers: { 'Content-Type': 'application/json' },
+			status: status,
+		})
+	);
+};
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
+		if (request.method == 'OPTIONS') {
+			return handleCors(request, new Response());
+		}
 		let payload: FirebasePayload | undefined = undefined;
 		const { pathname } = new URL(request.url);
 		const token = getJwtToken(request);
@@ -24,7 +37,7 @@ export default {
 			try {
 				payload = await validateToken(token);
 			} catch {
-				return new Response('Unauthorized');
+				return decorateResponse(request, {}, 401);
 			}
 		}
 		if (pathname === '/api/user' && payload) {
@@ -34,18 +47,17 @@ export default {
 				if (aboutUser) {
 					const result = await update_users.updateProfile(env, [payload?.user_id, aboutUser]);
 					if (result.success) {
-						return new Response(`About updated to ${aboutUser} for userId ${payload?.user_id}`);
+						return decorateResponse(request, { success: true, message: 'Record updated' }, 200);
 					} else {
-						return new Response('No update');
+						return decorateResponse(request, { success: false, message: 'No update' }, 500);
 					}
 				}
 			} else if (request.method == 'GET') {
 				const userProfile = await fetch_users.fetchProfile(env, [payload?.user_id]);
-				return new Response(JSON.stringify(userProfile.results[0]), {
-					headers: { 'Content-Type': 'application/json' },
-				});
+
+				return decorateResponse(request, userProfile.results[0], 200);
 			}
 		}
-		return new Response('Not logged in');
+		return decorateResponse(request, {}, 401);
 	},
 } satisfies ExportedHandler<Env>;
