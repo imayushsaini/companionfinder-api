@@ -7,7 +7,9 @@
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "vitest",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+		"init-dev": "wrangler d1 execute hopontrip --local --file=./src/db/queries/init.sql"
+
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.5.2",

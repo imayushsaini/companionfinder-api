@@ -11,32 +11,28 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import tripsHandler from './controller/trips';
+import fetch_trips from './db/queries/trips/fetch_trips';
+import { parseTripData } from './db/queries/trips/handler';
 import fetch_users from './db/queries/users/fetch_users';
 import update_users from './db/queries/users/update_users';
 import { getJwtToken, validateToken } from './middleware/auth';
 import { handleCors } from './middleware/cors';
+import { decorateResponse } from './utils/reponse';
 
-const decorateResponse = (request: Request, response: any, status: number) => {
-	return handleCors(
-		request,
-		new Response(JSON.stringify(response), {
-			headers: { 'Content-Type': 'application/json' },
-			status: status,
-		})
-	);
-};
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		if (request.method == 'OPTIONS') {
 			return handleCors(request, new Response());
 		}
 		let payload: FirebasePayload | undefined = undefined;
-		const { pathname } = new URL(request.url);
+		const { pathname, searchParams } = new URL(request.url);
 		const token = getJwtToken(request);
 		if (token) {
 			try {
 				payload = await validateToken(token);
-			} catch {
+			} catch (error) {
+				console.log(error);
 				return decorateResponse(request, {}, 401);
 			}
 		}
@@ -57,6 +53,9 @@ export default {
 
 				return decorateResponse(request, userProfile.results[0], 200);
 			}
+		}
+		if (pathname === '/api/trips') {
+			return await tripsHandler(env, request);
 		}
 		return decorateResponse(request, {}, 401);
 	},
