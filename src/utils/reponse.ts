@@ -1,5 +1,8 @@
 import { handleCors } from '../middleware/cors';
-
+export enum status {
+	SUCCESSS = 'success',
+	FAILED = 'failed',
+}
 const decorateResponse = (request: Request, response: any, status: number) => {
 	return handleCors(
 		request,

@@ -14,5 +14,8 @@ CREATE TABLE IF NOT EXISTS Trips (
     to_location TEXT NOT NULL,
     itinerary TEXT NOT NULL, -- Storing array as JSON
     contactDetails TEXT NOT NULL,
-    bannerUrl TEXT NOT NULL -- Storing array as JSON
+    bannerUrl TEXT NOT NULL, -- Storing array as JSON
+	posted_on TEXT NOT NULL
 );
+
+ALTER TABLE Trips ADD COLUMN posted_on TEXT NOT NULL;

@@ -1,4 +1,4 @@
-const query = `INSERT INTO Trip (
+const query = `INSERT INTO Trips (
     user_id,
     trip_id,
     title,
@@ -8,15 +8,16 @@ const query = `INSERT INTO Trip (
     to_location,
     itinerary,
     contactDetails,
-    bannerUrl
-)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    bannerUrl,
+	posted_on
+)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  RETURNING trip_id`;
 
 const createTrip = async (env: Env, trip: TripRow) => {
-	const trip_id = crypto.randomUUID(); // Generate a unique ID
 	return await env.DB.prepare(query)
 		.bind(
 			trip.user_id,
-			trip_id,
+			crypto.randomUUID(), // Generate a unique ID
 			trip.title,
 			trip.startDate,
 			trip.endDate,
@@ -24,7 +25,8 @@ const createTrip = async (env: Env, trip: TripRow) => {
 			trip.to_location,
 			trip.itinerary,
 			trip.contactDetails,
-			trip.bannerUrl
+			trip.bannerUrl,
+			new Date().toISOString() // trip posted on current date
 		)
 		.run();
 };

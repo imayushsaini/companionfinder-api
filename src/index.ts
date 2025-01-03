@@ -12,8 +12,6 @@
  */
 
 import tripsHandler from './controller/trips';
-import fetch_trips from './db/queries/trips/fetch_trips';
-import { parseTripData } from './db/queries/trips/handler';
 import fetch_users from './db/queries/users/fetch_users';
 import update_users from './db/queries/users/update_users';
 import { getJwtToken, validateToken } from './middleware/auth';
@@ -55,7 +53,7 @@ export default {
 			}
 		}
 		if (pathname === '/api/trips') {
-			return await tripsHandler(env, request);
+			return await tripsHandler(env, request, payload);
 		}
 		return decorateResponse(request, {}, 401);
 	},
