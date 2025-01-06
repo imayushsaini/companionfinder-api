@@ -9,6 +9,7 @@ const stringifyTripData = (rawData: Trip): TripRow => {
 		to_location: rawData.to_location,
 		itinerary: Array.isArray(rawData.itinerary) ? JSON.stringify(rawData.itinerary) : rawData.itinerary,
 		contactDetails: rawData.contactDetails,
+		additional_info: rawData.additional_info,
 		bannerUrl: Array.isArray(rawData.bannerUrl) ? JSON.stringify(rawData.bannerUrl) : rawData.bannerUrl,
 		posted_on: typeof rawData.posted_on === 'string' ? rawData.posted_on : rawData.posted_on.toISOString(),
 	};
@@ -25,6 +26,7 @@ const parseTripData = (rawData: TripRow): Trip => {
 		to_location: String(rawData.to_location),
 		itinerary: processItinerary(rawData.itinerary), // Parse JSON string to array
 		contactDetails: String(rawData.contactDetails),
+		additional_info: String(rawData.additional_info),
 		bannerUrl: processItinerary(rawData.bannerUrl), // Parse JSON string to array
 		posted_on: new Date(rawData.startDate), // Convert ISO 8601 string to Date object
 	};

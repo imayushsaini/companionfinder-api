@@ -8,6 +8,7 @@ interface TripRow {
 	to_location: string;
 	itinerary: string; // JSON string
 	contactDetails: string;
+	additional_info: string;
 	bannerUrl: string; // JSON string
 	posted_on: string; // ISO 8601 string
 }
@@ -22,6 +23,7 @@ interface Trip {
 	to_location: string;
 	itinerary: string[]; // Parsed JSON array
 	contactDetails: string;
+	additional_info: string;
 	bannerUrl: string[]; // Parsed JSON array
 	posted_on: Date;
 }
