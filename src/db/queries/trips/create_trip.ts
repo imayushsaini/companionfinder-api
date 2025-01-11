@@ -8,9 +8,10 @@ const query = `INSERT INTO Trips (
     to_location,
     itinerary,
     contactDetails,
+	additional_info,
     bannerUrl,
 	posted_on
-)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   RETURNING trip_id`;
 
 const createTrip = async (env: Env, trip: TripRow) => {
@@ -25,6 +26,7 @@ const createTrip = async (env: Env, trip: TripRow) => {
 			trip.to_location,
 			trip.itinerary,
 			trip.contactDetails,
+			trip.additional_info,
 			trip.bannerUrl,
 			new Date().toISOString() // trip posted on current date
 		)
