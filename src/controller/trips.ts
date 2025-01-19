@@ -1,9 +1,11 @@
 import create_trip from '../db/queries/trips/create_trip';
 import fetch_trips from '../db/queries/trips/fetch_trips';
 import { parseTripData, stringifyTripData, validator } from '../db/queries/trips/handler';
+import update_users from '../db/queries/users/update_users';
 import { decorateResponse, status } from '../utils/reponse';
 
 const DEFAULT_MAX_RESULTS = 10;
+const DEFAULT_VALUE = 'DEFAULT';
 const tripsHandler = async (env: Env, request: Request, payload: FirebasePayload | undefined): Promise<Response> => {
 	const { searchParams } = new URL(request.url);
 	if (request.method == 'GET') {
@@ -40,10 +42,13 @@ const tripsHandler = async (env: Env, request: Request, payload: FirebasePayload
 		} catch (error) {
 			return decorateResponse(request, { status: status.SUCCESSS }, 400);
 		}
-		const result = await create_trip.createTrip(env, stringifyTripData(tripDetails));
-
-		if (result.success) {
-			return decorateResponse(request, { status: status.SUCCESSS, message: 'Trip Created', trip_id: result.results[0].trip_id }, 201);
+		const [result1, result2] = await Promise.all([
+			create_trip.createTrip(env, stringifyTripData(tripDetails)),
+			update_users.updateProfile(env, [user_id, payload.name, DEFAULT_VALUE]),
+		]);
+		// No need to rollback if one fails as the other is independent.
+		if (result1.success) {
+			return decorateResponse(request, { status: status.SUCCESSS, message: 'Trip Created', trip_id: result1.results[0].trip_id }, 201);
 		} else {
 			return decorateResponse(request, { status: status.FAILED }, 500);
 		}

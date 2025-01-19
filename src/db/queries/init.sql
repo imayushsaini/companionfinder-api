@@ -20,3 +20,5 @@ CREATE TABLE IF NOT EXISTS Trips (
     bannerUrl TEXT NOT NULL, -- Storing array as JSON
 	posted_on TEXT NOT NULL
 );
+
+Alter table Users add column name TEXT;

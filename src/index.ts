@@ -39,7 +39,7 @@ export default {
 				const input = (await request.json()) as Record<string, string>;
 				const aboutUser: string | undefined = input['about'];
 				if (aboutUser) {
-					const result = await update_users.updateProfile(env, [payload?.user_id, aboutUser]);
+					const result = await update_users.updateProfile(env, [payload.user_id, payload.name, aboutUser]);
 					if (result.success) {
 						return decorateResponse(request, { success: true, message: 'Record updated' }, 200);
 					} else {

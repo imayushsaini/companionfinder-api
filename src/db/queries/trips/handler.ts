@@ -15,7 +15,7 @@ const stringifyTripData = (rawData: Trip): TripRow => {
 	};
 };
 
-const parseTripData = (rawData: TripRow): Trip => {
+const parseTripData = (rawData: TripRowWithUser): TripWithUser => {
 	return {
 		user_id: String(rawData.user_id),
 		trip_id: String(rawData.trip_id),
@@ -29,6 +29,7 @@ const parseTripData = (rawData: TripRow): Trip => {
 		additional_info: String(rawData.additional_info),
 		bannerUrl: processItinerary(rawData.bannerUrl), // Parse JSON string to array
 		posted_on: new Date(rawData.startDate), // Convert ISO 8601 string to Date object
+		name: isTripRowWithUser(rawData) ? String(rawData.name) : null,
 	};
 };
 
@@ -69,5 +70,9 @@ const validator = (tripDetails: Trip) => {
 		throw new Error('Missing day plans');
 	}
 };
+
+function isTripRowWithUser(rawData: any): rawData is TripRowWithUser {
+	return (rawData as TripRowWithUser).name !== undefined;
+}
 
 export { parseTripData, stringifyTripData, validator };

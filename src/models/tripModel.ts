@@ -1,3 +1,4 @@
+// interface of Row (how data stored in db)
 interface TripRow {
 	user_id: string;
 	trip_id: string;
@@ -12,7 +13,7 @@ interface TripRow {
 	bannerUrl: string; // JSON string
 	posted_on: string; // ISO 8601 string
 }
-
+// for data coming from request , to create/update a trip
 interface Trip {
 	user_id: string;
 	trip_id: string;
@@ -26,4 +27,15 @@ interface Trip {
 	additional_info: string;
 	bannerUrl: string[]; // Parsed JSON array
 	posted_on: Date;
+}
+
+// data coming after executing table join with User,
+// since its a left join , user data may be null
+interface TripRowWithUser extends TripRow {
+	name: string | null;
+}
+
+// response pojo for fetch trips request.
+interface TripWithUser extends Trip {
+	name: string | null;
 }
